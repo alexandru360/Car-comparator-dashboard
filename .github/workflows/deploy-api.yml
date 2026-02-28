@@ -44,6 +44,13 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
+            echo "::error title=Missing Secret::AZURE_WEBAPP_PUBLISH_PROFILE is not configured.%0ADownload the publish profile from your Azure App Service and add it as a repository secret under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
