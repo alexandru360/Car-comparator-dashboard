@@ -1,0 +1,100 @@
+@page "/cars/{Id:int}"
+@using CarComparator.Shared.Contracts
+@using CarComparator.Shared.DTOs
+@inject ICarApi CarApi
+@inject NavigationManager Navigation
+
+<PageTitle>@(car != null ? $"{car.Year} {car.Make} {car.Model}" : "Car Details")</PageTitle>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (car != null)
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/cars">Cars</a></li>
+            <li class="breadcrumb-item active">@car.Year @car.Make @car.Model</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-6">
+            @if (!string.IsNullOrEmpty(car.ImageUrl))
+            {
+                <img src="@car.ImageUrl" class="img-fluid rounded" alt="@car.Make @car.Model" />
+            }
+        </div>
+        <div class="col-md-6">
+            <h1>@car.Year @car.Make @car.Model</h1>
+            <h3 class="text-success">@car.Price.ToString("C")</h3>
+
+            <table class="table table-bordered mt-3">
+                <tbody>
+                    <tr><th>Make</th><td>@car.Make</td></tr>
+                    <tr><th>Model</th><td>@car.Model</td></tr>
+                    <tr><th>Year</th><td>@car.Year</td></tr>
+                    @if (!string.IsNullOrEmpty(car.FuelType))
+                    {
+                        <tr><th>Fuel Type</th><td>@car.FuelType</td></tr>
+                    }
+                    @if (!string.IsNullOrEmpty(car.Transmission))
+                    {
+                        <tr><th>Transmission</th><td>@car.Transmission</td></tr>
+                    }
+                    @if (car.Mileage.HasValue)
+                    {
+                        <tr><th>Mileage</th><td>@car.Mileage.Value.ToString("N0") km</td></tr>
+                    }
+                    @if (!string.IsNullOrEmpty(car.Color))
+                    {
+                        <tr><th>Color</th><td>@car.Color</td></tr>
+                    }
+                    <tr><th>Listed</th><td>@car.CreatedAt.ToString("d")</td></tr>
+                </tbody>
+            </table>
+
+            @if (!string.IsNullOrEmpty(car.Description))
+            {
+                <h5>Description</h5>
+                <p>@car.Description</p>
+            }
+
+            @if (!string.IsNullOrEmpty(car.SourceUrl))
+            {
+                <a href="@car.SourceUrl" target="_blank" class="btn btn-outline-primary">View Original Listing</a>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private CarDto? car;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+        try
+        {
+            car = await CarApi.GetCarByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading car: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CarComparator.Api/CarComparator.Api.csproj" />
+    <Project Path="src/CarComparator.Shared/CarComparator.Shared.csproj" />
+    <Project Path="src/CarComparator.Web/CarComparator.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Cars/">
+    <Project Path="src/Modules/Cars/CarComparator.Modules.Cars.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Scraping/">
+    <Project Path="src/Modules/Scraping/CarComparator.Modules.Scraping.csproj" />
+  </Folder>
+</Solution>
