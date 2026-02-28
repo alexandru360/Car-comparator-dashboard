@@ -16,7 +16,7 @@ Car comparator project
 
 ## Deployment
 
-The application is automatically deployed via GitHub Actions on every push to `main`.
+The frontend is automatically deployed to GitHub Pages via GitHub Actions on every push to `main`. The API deployment to Azure is optional and must be triggered manually.
 
 ### Frontend → GitHub Pages
 
@@ -31,10 +31,11 @@ The Blazor WebAssembly app is built and deployed to GitHub Pages. The workflow i
 
 > **Setup:** Go to **Settings → Pages** and set the source to **GitHub Actions**.
 
-### API → Azure App Service
+### API → Azure App Service (optional, manual)
 
-The ASP.NET Core API is deployed to Azure App Service. The workflow is defined in
-`.github/workflows/deploy-api.yml`.
+The ASP.NET Core API can be deployed to Azure App Service via a manually-triggered workflow
+defined in `.github/workflows/deploy-api.yml`. This workflow does **not** run automatically on push
+— trigger it from **Actions → Deploy API to Azure App Service → Run workflow** only when needed.
 
 **Required repository secret:**
 
