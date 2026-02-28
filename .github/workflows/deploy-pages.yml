@@ -39,8 +39,8 @@ jobs:
           API_URL: ${{ secrets.API_BASE_URL }}
         run: |
           if [ -z "$API_URL" ]; then
-            echo "Error: API_BASE_URL secret is not set. Configure it in Settings → Secrets and variables → Actions."
-            exit 1
+            echo "Warning: API_BASE_URL secret is not set. Falling back to default Azure App Service URL."
+            API_URL="https://carcomparator-api.azurewebsites.net"
           fi
           echo "{\"ApiBaseUrl\":\"$API_URL\"}" > publish/wwwroot/appsettings.Production.json
 
