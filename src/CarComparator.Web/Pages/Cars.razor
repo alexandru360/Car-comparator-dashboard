@@ -1,0 +1,154 @@
+@page "/cars"
+@using CarComparator.Shared.Contracts
+@using CarComparator.Shared.DTOs
+@inject ICarApi CarApi
+
+<PageTitle>Cars</PageTitle>
+
+<h1>Cars</h1>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <input class="form-control" placeholder="Make" @bind="searchMake" />
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" placeholder="Model" @bind="searchModel" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" placeholder="Year from" @bind="yearFrom" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" placeholder="Year to" @bind="yearTo" />
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100" @onclick="SearchCars">Search</button>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (result != null)
+{
+    <p>Found @result.TotalCount cars (page @result.Page of @result.TotalPages)</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var car in result.Items)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(car.ImageUrl))
+                    {
+                        <img src="@car.ImageUrl" class="card-img-top" alt="@car.Make @car.Model" style="height:200px;object-fit:cover" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@car.Year @car.Make @car.Model</h5>
+                        <p class="card-text">
+                            <strong>Price:</strong> @car.Price.ToString("C")<br />
+                            @if (!string.IsNullOrEmpty(car.FuelType))
+                            {
+                                <span><strong>Fuel:</strong> @car.FuelType</span><br />
+                            }
+                            @if (!string.IsNullOrEmpty(car.Transmission))
+                            {
+                                <span><strong>Transmission:</strong> @car.Transmission</span><br />
+                            }
+                            @if (car.Mileage.HasValue)
+                            {
+                                <span><strong>Mileage:</strong> @car.Mileage.Value.ToString("N0") km</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/cars/@car.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                        @if (!string.IsNullOrEmpty(car.SourceUrl))
+                        {
+                            <a href="@car.SourceUrl" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">Source</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-3">
+        @if (currentPage > 1)
+        {
+            <button class="btn btn-outline-secondary me-1" @onclick="PrevPage">Previous</button>
+        }
+        @if (currentPage < (result?.TotalPages ?? 1))
+        {
+            <button class="btn btn-outline-secondary" @onclick="NextPage">Next</button>
+        }
+    </div>
+}
+
+@code {
+    private string? searchMake;
+    private string? searchModel;
+    private int? yearFrom;
+    private int? yearTo;
+    private int currentPage = 1;
+    private bool isLoading = false;
+    private string? errorMessage;
+    private PagedResultDto<CarListItemDto>? result;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchCars();
+    }
+
+    private async Task SearchCars()
+    {
+        isLoading = true;
+        errorMessage = null;
+        currentPage = 1;
+        await LoadCars();
+    }
+
+    private async Task PrevPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadCars();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        currentPage++;
+        await LoadCars();
+    }
+
+    private async Task LoadCars()
+    {
+        isLoading = true;
+        try
+        {
+            var search = new CarSearchDto
+            {
+                Make = searchMake,
+                Model = searchModel,
+                YearFrom = yearFrom,
+                YearTo = yearTo,
+                Page = currentPage,
+                PageSize = 12
+            };
+            result = await CarApi.GetCarsAsync(search);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading cars: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
