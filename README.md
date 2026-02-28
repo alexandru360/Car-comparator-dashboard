@@ -1,4 +1,12 @@
 # Car-comparator-dashboard
+
+[![Deploy Frontend to GitHub Pages](https://github.com/alexandru360/Car-comparator-dashboard/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/alexandru360/Car-comparator-dashboard/actions/workflows/deploy-pages.yml)
+[![Deploy API to Azure App Service](https://github.com/alexandru360/Car-comparator-dashboard/actions/workflows/deploy-api.yml/badge.svg)](https://github.com/alexandru360/Car-comparator-dashboard/actions/workflows/deploy-api.yml)
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![Blazor WebAssembly](https://img.shields.io/badge/Blazor-WebAssembly-512BD4?logo=blazor)](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
+[![Azure App Service](https://img.shields.io/badge/Azure-App%20Service-0078D4?logo=microsoftazure)](https://azure.microsoft.com/products/app-service)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?logo=github)](https://alexandru360.github.io/Car-comparator-dashboard/)
+
 Car comparator project
 
 ## Live Demo
